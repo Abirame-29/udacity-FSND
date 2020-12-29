@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask_wtf import Form
-from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField
-from wtforms.validators import DataRequired, AnyOf, URL
+from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField, TextAreaField
+from wtforms.validators import DataRequired, AnyOf, URL, ValidationError
 
 class ShowForm(Form):
     artist_id = StringField(
@@ -15,6 +15,13 @@ class ShowForm(Form):
         validators=[DataRequired()],
         default= datetime.today()
     )
+
+def validate_genre(form, field):
+    genre_list = ['Alternative', 'Blues', 'Classical', 'Country', 'Electronic', 'Folk', 'Funk', 'Hip-Hop', 'Heavy Metal', 'Instrumental', 'Jazz', 'Musical Theatre', 'Pop', 'Punk', 'R&B', 'Reggae', 'Rock n Roll', 'Soul', 'Other']
+    printf('field data' , field.data)
+    for genre in field.data:
+        if genre not in genre_list:
+            raise ValidationError('Genre not in list')
 
 class VenueForm(Form):
     name = StringField(
@@ -88,9 +95,10 @@ class VenueForm(Form):
     image_link = StringField(
         'image_link'
     )
+  
     genres = SelectMultipleField(
         # TODO implement enum restriction
-        'genres', validators=[DataRequired()],
+        'genres', validators=[DataRequired(), validate_genre],
         choices=[
             ('Alternative', 'Alternative'),
             ('Blues', 'Blues'),
@@ -111,10 +119,23 @@ class VenueForm(Form):
             ('Rock n Roll', 'Rock n Roll'),
             ('Soul', 'Soul'),
             ('Other', 'Other'),
-        ]
+        ],
+    )
+
+    website = StringField(
+        'website', validators=[URL()]
     )
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
+    )
+    image_link = StringField(
+        'image_link', validators=[URL()]
+    )
+    seeking_talent = BooleanField(
+        'seeking_talent'
+    )
+    seeking_description = TextAreaField(
+        'seeking_description'
     )
 
 class ArtistForm(Form):
