@@ -96,7 +96,26 @@ app.jinja_env.filters['datetime'] = format_datetime
 
 @app.route('/')
 def index():
-  return render_template('pages/home.html')
+  print("recently listed")
+  artists = Artist.query.order_by(Artist.id.desc())
+  venues = Venue.query.order_by(Venue.id.desc())
+  data = []
+  i = 0
+  j = 0
+  while (i<artists.count() and j<venues.count() and len(data)<10):
+    if(artists[i].id > venues[j].id):
+      data.append({"id":artists[i].id, "name" : artists[i].name, "type" : "artist"})
+      i += 1
+    else:  
+      data.append({"id":venues[j].id, "name" : venues[j].name, "type" : "venue"})
+      j += 1
+  while(len(data)<10 and j<venues.count()):
+    data.append({"id":venues[j].id, "name" : venues[j].name, "type" : "venue"})
+    j += 1
+  while(len(data)<10 and i<artists.count()):
+    data.append({"id":artists[i].id, "name" : artists[i].name, "type" : "artist"})
+    i += 1
+  return render_template('pages/home.html', data=data)
 
 
 #  Venues
@@ -130,8 +149,18 @@ def venues():
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
+  searchby = request.form.get('searchby','')
   search = request.form.get('search_term', '')
-  venues = Venue.query.filter(Venue.name.ilike("%" + search + "%")).all()
+  if(searchby=='area'):
+    if ',' in search:
+      cityName = search.split(',')[0]
+      stateName = search.split(',')[1].replace(' ','')
+      venues = Venue.query.filter(Venue.state.ilike("%" + stateName + "%")).filter(Venue.city.ilike("%" + cityName + "%")).all()
+    else:
+      venues = Venue.query.filter(Venue.state.ilike("%" + search + "%")).all()
+      venues += Venue.query.filter(Venue.city.ilike("%" + search + "%")).all()
+  else:
+    venues = Venue.query.filter(Venue.name.ilike("%" + search + "%")).all()  
   data = []
   for venue in venues:
     upcoming_shows = db.session.query(Show).join(Venue).filter(venue.id==Venue.id, Show.start_time > datetime.now()).count()                  
@@ -235,7 +264,7 @@ def create_venue_submission():
     flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed.')
   else:
     flash('Venue ' + request.form['name'] + ' was successfully listed!')
-  return render_template('pages/home.html')
+  return redirect(url_for('index'))
 
 
 @app.route('/venues/<venue_id>/delete', methods=['POST'])
@@ -259,7 +288,7 @@ def delete_venue(venue_id):
     flash('An error occurred. Venue ' + name + ' could not be deleted.')
   else:
     flash('Venue ' + name+ ' deleted successfully')
-  return render_template('pages/home.html')
+  return redirect(url_for('index'))
 
 #  Artists
 #  ----------------------------------------------------------------
@@ -273,12 +302,21 @@ def artists():
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
+  searchby = request.form.get('searchby','')
   search = request.form.get('search_term', '')
-  artists = Artist.query.filter(Artist.name.ilike("%" + search + "%")).all()
+  if(searchby=='area'):
+    if ',' in search:
+      cityName = search.split(',')[0]
+      stateName = search.split(',')[1].replace(' ','')
+      artists = Artist.query.filter(Artist.state.ilike("%" + stateName + "%")).filter(Artist.city.ilike("%" + cityName + "%")).all()
+    else:
+      artists = Artist.query.filter(Artist.state.ilike("%" + search + "%")).all()
+      artists += Artist.query.filter(Artist.city.ilike("%" + search + "%")).all()
+  else:
+    artists = Venue.query.filter(Venue.name.ilike("%" + search + "%")).all()
   data = []
   for artist in artists:
     upcoming_shows = db.session.query(Show).join(Artist).filter(Artist.id==artist.id, Show.start_time > datetime.now()).count()
-    print(upcoming_shows)
     data.append({
       "id" : artist.id,
       "name" : artist.name,
@@ -462,7 +500,7 @@ def create_artist_submission():
     flash('An error occurred. Artist ' + request.form['name'] + ' could not be listed.')
   else:
     flash('Artist ' + request.form['name'] + ' was successfully listed!')
-  return render_template('pages/home.html')
+  return redirect(url_for('index'))
 
 
 @app.route('/artists/<artist_id>/delete', methods=['POST'])
@@ -485,7 +523,7 @@ def delete_artist(artist_id):
     flash('An error occurred. Artist ' + name + ' could not be deleted.')
   else:
     flash('Artist ' + name+ ' deleted successfully')
-  return render_template('pages/home.html')
+  return redirect(url_for('index'))
 
 
 #  Shows
@@ -533,7 +571,7 @@ def create_show_submission():
     flash('An error occurred. Show could not be listed.')
   else: 
     flash('Show was successfully listed!')
-  return render_template('pages/home.html')
+  return redirect(url_for('index'))
 
 @app.errorhandler(404)
 def not_found_error(error):

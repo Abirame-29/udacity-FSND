@@ -21,6 +21,27 @@
 	<div class="col-sm-6 hidden-sm hidden-xs">
 		<img id="front-splash" src="{{ url_for('static',filename='img/front-splash.jpg') }}" alt="Front Photo of Musical Band" />
 		<p class="lead">Recently listed</p>
+		<ul class="items">
+			{% for d in data %}
+			<li>
+				{% if d.type=="venue" %}
+					<a href="/venues/{{ d.id }}">
+						<i class="fas fa-music"></i>
+						<div class="item">
+							<h5>{{ d.name }}</h5>
+						</div>
+					</a>
+				{% else %}
+					<a href="/artists/{{ d.id }}">
+						<i class="fas fa-users"></i>
+						<div class="item">
+							<h5>{{ d.name }}</h5>
+						</div>
+					</a>
+				{% endif %}
+			</li>
+			{% endfor %}
+		</ul>
 	</div>
 </div>
 {% endblock %}
