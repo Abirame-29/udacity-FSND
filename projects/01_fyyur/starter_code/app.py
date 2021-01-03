@@ -313,7 +313,7 @@ def search_artists():
       artists = Artist.query.filter(Artist.state.ilike("%" + search + "%")).all()
       artists += Artist.query.filter(Artist.city.ilike("%" + search + "%")).all()
   else:
-    artists = Venue.query.filter(Venue.name.ilike("%" + search + "%")).all()
+    artists = Artist.query.filter(Artist.name.ilike("%" + search + "%")).all()
   data = []
   for artist in artists:
     upcoming_shows = db.session.query(Show).join(Artist).filter(Artist.id==artist.id, Show.start_time > datetime.now()).count()
@@ -548,6 +548,10 @@ def shows():
 def create_shows():
   # renders form. do not touch.
   form = ShowForm()
+  artists = Artist.query.all()
+  form.artist_id.choices = [(artist.id, artist.name) for artist in artists]
+  venues = Venue.query.all()
+  form.venue_id.choices = [(venue.id, venue.name) for venue in venues]
   return render_template('forms/new_show.html', form=form)
 
 @app.route('/shows/create', methods=['POST'])
