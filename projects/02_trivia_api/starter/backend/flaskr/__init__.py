@@ -1,4 +1,4 @@
-import os
+import os, sys
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -34,7 +34,9 @@ def create_app(test_config=None):
   @app.route('/categories', methods = ['GET'])
   def get_categories():
     categories = Category.query.all()
-    formatted_categories = [category.format() for category in categories]
+    formatted_categories = {}
+    for category in categories:
+      formatted_categories[category.id] = category.type
     if len(formatted_categories)==0:
       abort(404)
     return jsonify({
@@ -45,19 +47,25 @@ def create_app(test_config=None):
 
   @app.route('/questions', methods = ['GET'])
   def get_questions():
-    questions = Question.query.all()
-    current_questions = paginate_questions(request, questions)
-    categories = Category.query.all()
-    formatted_categories = [category.format() for category in categories]
-    if len(current_questions)==0:
+    try:
+      questions = Question.query.all()
+      current_questions = paginate_questions(request, questions)
+      categories = Category.query.all()
+      formatted_categories = {}
+      for category in categories:
+        formatted_categories[category.id] = category.type
+      if len(current_questions)==0:
+        abort(404)
+      return jsonify({
+        'success' : True,
+        'categories' : formatted_categories,
+        'current_category' : None,
+        'questions' : current_questions,
+        'total_questions' : Question.query.count()
+      })
+    except:
+      print(sys.exc_info())
       abort(404)
-    return jsonify({
-      'success' : True,
-      'categories' : formatted_categories,
-      'current_category' : None,
-      'questions' : current_questions,
-      'total_questions' : Question.query.count()
-    })
 
   @app.route('/questions/<int:question_id>', methods=['DELETE'])
   def delete_question(question_id):
@@ -78,7 +86,7 @@ def create_app(test_config=None):
   def add_question():
     try:
       data = request.get_json()
-      search = data.get('search',None)
+      search = data.get('searchTerm',None)
       if search:
         questions = Question.query.filter(Question.question.ilike("%"+search+"%")).all()
         current_questions = paginate_questions(request,questions)
@@ -88,11 +96,12 @@ def create_app(test_config=None):
           'total_questions' : len(questions)
         })
       else:
+        category = Category.query.get(data.get('category'))
         question = Question(
           question = data.get('question',None),
           answer = data.get('answer',None),
           difficulty = data.get('difficulty',None),
-          category = data.get('category',None)
+          category = category.type
         )
         question.insert()
         questions = Question.query.all()
@@ -104,54 +113,65 @@ def create_app(test_config=None):
           'total_questions' : Question.query.count()
         })
     except:
-      abort(422)
+      print(sys.exc_info())
+      abort(404)
 
+  @app.route('/categories/<int:category_id>/questions', methods=['GET'])
+  def get_category_questions(category_id):
+    try:
+      category = Category.query.get(category_id)
+      if category is None:
+        abort(404)
+      questions = Question.query.filter(Question.category==category.type)
+      current_questions = paginate_questions(request, questions.all())
+      return jsonify({
+        'success' : True,
+        'questions' : current_questions,
+        'total_questions' : questions.count(),
+        'category' : category.type
+      })
+    except:
+      print(sys.exc_info())
+      abort(404)
 
-  '''
-  @TODO: 
-  Create a POST endpoint to get questions based on a search term. 
-  It should return any questions for whom the search term 
-  is a substring of the question. 
+  @app.route('/quizzes', methods=['POST'])
+  def get_next_question():
+    data = request.get_json()
+    previous_questions = data['previous_questions']
+    if(data['quiz_category']['id']==0):
+      questions = Question.query.all()
+    else:
+      category = data['quiz_category']['type']
+      questions = Question.query.filter(Question.category==category).all()    
+    
+    question_ids = [question.id for question in questions]
+    
+    for prev in previous_questions:
+      question_ids.remove(prev)
 
-  TEST: Search by any phrase. The questions list will update to include 
-  only question that include that string within their question. 
-  Try using the word "title" to start. 
-  '''
+    if len(question_ids)==0:
+      return jsonify({
+        'success' : True,
+        'question' : None
+      })
+    random_index = random.randrange( len(question_ids) )     
+    random_id = question_ids[random_index]
+    random_question = Question.query.filter(Question.id==random_id).one_or_none()
+    if random_question is None:
+      abort(404)
+    return jsonify({
+      'success' : True,
+      'question' : random_question.format()
+    })
 
-  '''
-  @TODO: 
-  Create a GET endpoint to get questions based on category. 
-
-  TEST: In the "List" tab / main screen, clicking on one of the 
-  categories in the left column will cause only questions of that 
-  category to be shown. 
-  '''
-
-
-  '''
-  @TODO: 
-  Create a POST endpoint to get questions to play the quiz. 
-  This endpoint should take category and previous question parameters 
-  and return a random questions within the given category, 
-  if provided, and that is not one of the previous questions. 
-
-  TEST: In the "Play" tab, after a user selects "All" or a category,
-  one question at a time is displayed, the user is allowed to answer
-  and shown whether they were correct or not. 
-  '''
-
-  '''
-  @TODO: 
-  Create error handlers for all expected errors 
-  including 404 and 422. 
-  '''
+  
   @app.errorhandler(404)
   def not_found(error):
     return jsonify({
       'success' : False,
       'error' : 404,
       'message' : 'Resource not found'
-    })
+    }), 404
 
   @app.errorhandler(422)
   def unprocessable(error):
@@ -159,7 +179,7 @@ def create_app(test_config=None):
       'success' : False,
       'error' : 422,
       'message' : 'Unprocessable'
-    })
+    }), 422
   
   return app
 
