@@ -103,6 +103,8 @@ def create_app(test_config=None):
           difficulty = data.get('difficulty',None),
           category = category.type
         )
+        if question.question is None or question.answer is None or question.category is None or question.difficulty is None:
+          abort(400)
         question.insert()
         questions = Question.query.all()
         current_questions = paginate_questions(request, questions)
@@ -137,6 +139,8 @@ def create_app(test_config=None):
   @app.route('/quizzes', methods=['POST'])
   def get_next_question():
     data = request.get_json()
+    if data is None:
+      abort(400)
     previous_questions = data['previous_questions']
     if(data['quiz_category']['id']==0):
       questions = Question.query.all()
@@ -164,7 +168,14 @@ def create_app(test_config=None):
       'question' : random_question.format()
     })
 
-  
+  @app.errorhandler(400)
+  def unprocessable(error):
+    return jsonify({
+      'success' : False,
+      'error' : 400,
+      'message' : 'Bad request'
+    }), 400
+
   @app.errorhandler(404)
   def not_found(error):
     return jsonify({

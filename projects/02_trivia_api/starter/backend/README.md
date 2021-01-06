@@ -69,26 +69,295 @@ One note before you delve into your tasks: for each endpoint you are expected to
 REVIEW_COMMENT
 ```
 This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
-
-Endpoints
-GET '/categories'
-GET ...
-POST ...
-DELETE ...
-
-GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
-
 ```
 
+## Endpoints
+
+##### GET /categories
+* General
+     * Returns a list of categories, success value and total number of categories
+* Sample ```curl http://127.0.0.1:5000/categories```
+```json
+{
+  "categories": {
+    "1": "Art",
+    "2": "Science",
+    "3": "History",
+    "4": "Geography",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "success": true,
+  "total_categories": 6
+}
+```
+##### GET /questions
+* General
+    * Returns a list of questions, success value, total number of questions, a list of categories and the current category. 
+    * Results are paginated in groups of 10. Include a request argument to choose page number starting from 1
+* Sample ```curl http://127.0.0.1:5000/questions```  or   ```curl http://127.0.0.1:5000/questions?page=1```
+
+```json
+{
+  "categories": {
+    "1": "Art",
+    "2": "Science",
+    "3": "History",
+    "4": "Geography",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "current_category": null,
+  "questions": [
+    {
+      "answer": "120 days",
+      "category": "Science",
+      "difficulty": 2,
+      "id": 1,
+      "question": "How long does a human red blood cell survive?"
+    },
+    {
+      "answer": "Nectar",
+      "category": "Science",
+      "difficulty": 1,
+      "id": 3,
+      "question": "What do bees collect and use to create honey?"
+    },
+    {
+      "answer": "AB negative",
+      "category": "Science",
+      "difficulty": 1,
+      "id": 4,
+      "question": "What is the rarest blood type?"
+    },
+    {
+      "answer": "Leaf",
+      "category": "Science",
+      "difficulty": 1,
+      "id": 5,
+      "question": "What part of the plant conducts photosynthesis?"
+    },
+    {
+      "answer": "Middle ear",
+      "category": "Science",
+      "difficulty": 2,
+      "id": 6,
+      "question": "Where can you find the smallest bone in the human body?"
+    },
+    {
+      "answer": "3",
+      "category": "Science",
+      "difficulty": 2,
+      "id": 7,
+      "question": "How many hearts does an octopus have?"
+    },
+    {
+      "answer": "California",
+      "category": "Science",
+      "difficulty": 3,
+      "id": 8,
+      "question": "The oldest living tree is 4,843 years old and can be found where?"
+    },
+    {
+      "answer": "Sir Charles Wood",
+      "category": "History",
+      "difficulty": 1,
+      "id": 13,
+      "question": "Who introduced English as official language?"
+    },
+    {
+      "answer": "S. Mukherjee",
+      "category": "History",
+      "difficulty": 1,
+      "id": 12,
+      "question": "Who was the first woman IAF chief?"
+    },
+    {
+      "answer": "Santosh Yadav",
+      "category": "History",
+      "difficulty": 1,
+      "id": 11,
+      "question": "Who was the first woman to climb Mount Everest?"
+    }
+  ],
+  "success": true,
+  "total_questions": 21
+}
+```
+##### GET /categories/{category_id}/questions
+* General
+    * Fetches the questions under the given category
+    * Returns success value, list of questions paginated, total number of questions and the choosen category
+* Sample ```curl http://127.0.0.1:5000/categories/4/questions```
+```json
+{
+  "category": "Geography",
+  "questions": [
+    {
+      "answer": "Russia",
+      "category": "Geography",
+      "difficulty": 2,
+      "id": 18,
+      "question": "Which country has largest land mass"
+    }
+  ],
+  "success": true,
+  "total_questions": 1
+}
+```
+
+##### DELETE /questions/{question_id}
+* General
+    * Deletes the question with given question_id
+    * Returns success value, deleted question id, refreshed questions with pagination and the total number of questions after deletion
+* Sample ```curl -X DELETE http://127.0.0.1:5000/questions/14```
+```json
+{
+  "deleted": 14,
+  "questions": [
+    {
+      "answer": "120 days",
+      "category": "Science",
+      "difficulty": 2,
+      "id": 1,
+      "question": "How long does a human red blood cell survive?"
+    },
+    {
+      "answer": "Nectar",
+      "category": "Science",
+      "difficulty": 1,
+      "id": 3,
+      "question": "What do bees collect and use to create honey?"
+    },
+    {
+      "answer": "AB negative",
+      "category": "Science",
+      "difficulty": 1,
+      "id": 4,
+      "question": "What is the rarest blood type?"
+    },
+    {
+      "answer": "Leaf",
+      "category": "Science",
+      "difficulty": 1,
+      "id": 5,
+      "question": "What part of the plant conducts photosynthesis?"
+    },
+    {
+      "answer": "Middle ear",
+      "category": "Science",
+      "difficulty": 2,
+      "id": 6,
+      "question": "Where can you find the smallest bone in the human body?"
+    },
+    {
+      "answer": "3",
+      "category": "Science",
+      "difficulty": 2,
+      "id": 7,
+      "question": "How many hearts does an octopus have?"
+    },
+    {
+      "answer": "California",
+      "category": "Science",
+      "difficulty": 3,
+      "id": 8,
+      "question": "The oldest living tree is 4,843 years old and can be found where?"
+    },
+    {
+      "answer": "Sir Charles Wood",
+      "category": "History",
+      "difficulty": 1,
+      "id": 13,
+      "question": "Who introduced English as official language?"
+    },
+    {
+      "answer": "S. Mukherjee",
+      "category": "History",
+      "difficulty": 1,
+      "id": 12,
+      "question": "Who was the first woman IAF chief?"
+    },
+    {
+      "answer": "Santosh Yadav",
+      "category": "History",
+      "difficulty": 1,
+      "id": 11,
+      "question": "Who was the first woman to climb Mount Everest?"
+    }
+  ],
+  "success": true,
+  "total_questions": 20
+}
+```
+##### POST /questions
+* General
+    * Adds a question to the list if a question details is passes as data. It should have the question, answer, difficulty and the category
+    * If a search term is provided returns a list of questions matching the given search term
+    * Returns success value, paginated list of questions and the total number of questions.
+* Sample 
+```curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"question":"How many basketballs teams are in NBA?", "answer" : "30", "type":"Sports", "difficulty" : 2}'```
+```curl -X POST http://127.0.0.1:5000/questions -H "Content-Type: application/json" -d '{"searchTerm":"woman"}'```
+```json
+{
+  "questions": [
+    {
+      "answer": "S. Mukherjee",
+      "category": "History",
+      "difficulty": 1,
+      "id": 12,
+      "question": "Who was the first woman IAF chief?"
+    },
+    {
+      "answer": "Santosh Yadav",
+      "category": "History",
+      "difficulty": 1,
+      "id": 11,
+      "question": "Who was the first woman to climb Mount Everest?"
+    },
+    {
+      "answer": "Mother Teresa",
+      "category": "History",
+      "difficulty": 1,
+      "id": 9,
+      "question": "Who was the first woman to receive Nobel Price?"
+    }
+  ],
+  "success": true,
+  "total_questions": 3
+}
+```
+##### POST /quizzes
+* General
+    * Fetches a random unplayed question from the picked category. Previously played question list and the quiz category must be given in json
+    * Returns the question and success value
+* Sample ```curl -X POST http://127.0.0.1:5000/quizzes -H "Content-Type: application/json" -d '{"previous_questions" : [5,6], "quiz_category" : {"type" : "Science", "id":2}}'```
+```json
+{
+    'question' : {
+        "answer": "Mother Teresa",
+        "category": "History",
+        "difficulty": 1,
+        "id": 9,
+        "question": "Who was the first woman to receive Nobel Price?"
+    },
+    'success' : true
+    }
+```
+
+## Error Handling
+Errors are handled in json format
+```json
+{
+  "error": 400,
+  "message": "Bad request",
+  "success": false
+}
+```
+The API will return three error types when the request fails
+* 400 : Bad request
+* 404 : Resource not found
+* 422 : Unprocessable
 
 ## Testing
 To run the tests, run
