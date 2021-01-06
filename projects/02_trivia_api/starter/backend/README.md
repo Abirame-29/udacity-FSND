@@ -358,6 +358,7 @@ The API will return three error types when the request fails
 * 400 : Bad request
 * 404 : Resource not found
 * 422 : Unprocessable
+* 500 : Internal server error
 
 ## Testing
 To run the tests, run
