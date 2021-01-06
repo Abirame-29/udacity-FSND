@@ -334,14 +334,14 @@ This README is missing documentation of your endpoints. Below is an example for 
 * Sample ```curl -X POST http://127.0.0.1:5000/quizzes -H "Content-Type: application/json" -d '{"previous_questions" : [5,6], "quiz_category" : {"type" : "Science", "id":2}}'```
 ```json
 {
-    'question' : {
+    "question" : {
         "answer": "Mother Teresa",
         "category": "History",
         "difficulty": 1,
         "id": 9,
         "question": "Who was the first woman to receive Nobel Price?"
     },
-    'success' : true
+    "success" : true
     }
 ```
 
