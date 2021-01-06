@@ -153,9 +153,10 @@ def create_app(test_config=None):
             questions = Question.query.all()
         else:
             category = str(data['quiz_category']['id'])
-            ques = Question.query.filter(Question.category == category).all()
+            questions = Question.query.filter(Question.category == category)\
+                        .all()
 
-        question_ids = [question.id for question in ques]
+        question_ids = [question.id for question in questions]
 
         for prev in previous_questions:
             question_ids.remove(prev)
