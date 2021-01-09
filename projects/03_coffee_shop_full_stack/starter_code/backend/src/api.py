@@ -11,6 +11,12 @@ app = Flask(__name__)
 setup_db(app)
 CORS(app)
 
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
+
 '''
 @TODO uncomment the following line to initialize the datbase
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
@@ -19,15 +25,17 @@ CORS(app)
 # db_drop_and_create_all()
 
 ## ROUTES
-'''
-@TODO implement endpoint
-    GET /drinks
-        it should be a public endpoint
-        it should contain only the drink.short() data representation
-    returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
-        or appropriate status code indicating reason for failure
-'''
 
+@app.route('/drinks', methods=['GET'])
+def get_drinks():
+    drinks = Drink.query.all()
+    if len(drinks)==0:
+        abort(404)
+    return jsonify({
+        'success': True,
+        'drinks': [drink.short() for drink in drinks]
+    })
+    
 
 '''
 @TODO implement endpoint
@@ -37,6 +45,16 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks-detail', methods=['GET'])
+@requires_auth('get:drinks-detail')
+def get_drinks_detail(jwt):
+    drinks = Drink.query.all()
+    if len(drinks)==0:
+        abort(404)
+    return jsonify({
+        'success': True,
+        'drinks': [drink.long() for drink in drinks]
+    })
 
 
 '''
@@ -48,6 +66,23 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks', methods=['POST'])
+@requires_auth('post:drinks')
+def post_drinks(jwt):
+    try:
+        data = request.get_json()
+        if 'title' not in data or 'recipe' not in data:
+            abort(422)
+        new_title = data['title']
+        new_recipe = data['recipe']
+        drink = Drink(title = new_title, recipe = json.dumps(new_recipe))
+        drink.insert()
+        return jsonify({
+            'success': True,
+            'drinks': [drink.long()]
+        })
+    except:
+        abort(422)
 
 
 '''
@@ -61,6 +96,26 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks/<int:drink_id>')
+@requires_auth('patch:drinks')
+def edit_drinks(jwt, drink_id):
+    try:
+        drink = Drink.query.get(drink_id)
+        if drink:
+            data = request.get_json()
+            if 'title' in data:
+                drink.title = data['title']
+            if 'recipe' in data:
+                drink.recipe = json.dumps(data['recipe'])
+            drink.update()
+        else:
+            abort(404)
+        return jsonify({
+            'success': True,
+            'drink': [drink.long()]
+        })
+    except:
+        abort(422)
 
 
 '''
@@ -73,7 +128,21 @@ CORS(app)
     returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
         or appropriate status code indicating reason for failure
 '''
-
+@app.route('/drinks/<int:drink_id>')
+@requires_auth('delete:drinks')
+def delete_drink(jwt, drink_id):
+    try:
+        drink = Drink.query.get(drink_id)
+        if drink:
+            drink.delete()
+        else:
+            abort(404)
+        return jsonify({
+            'success': True,
+            'delete': drink_id
+        })
+    except:
+        abort(422)
 
 ## Error Handling
 '''
@@ -102,6 +171,13 @@ def unprocessable(error):
 @TODO implement error handler for 404
     error handler should conform to general task above 
 '''
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        'success': False,
+        'error': 404,
+        'message': 'Resource not found'
+    }), 404
 
 
 '''
