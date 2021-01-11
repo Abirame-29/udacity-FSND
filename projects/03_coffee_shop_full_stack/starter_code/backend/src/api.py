@@ -96,6 +96,7 @@ def post_drinks(jwt):
             abort(422)
         new_title = data['title']
         new_recipe = data['recipe']
+        drink = Drink(title=new_title)
         drink.recipe = recipe if type(new_recipe) == \
             str else json.dumps(new_recipe)
         drink.insert()
