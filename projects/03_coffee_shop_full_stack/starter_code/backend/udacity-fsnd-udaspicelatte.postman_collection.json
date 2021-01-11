@@ -31,12 +31,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/drinks",
-							"protocol": "http",
+							"raw": "{{host}}/drinks",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks"
 							]
@@ -63,12 +61,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/drinks-detail",
-							"protocol": "http",
+							"raw": "{{host}}/drinks-detail",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks-detail"
 							]
@@ -95,12 +91,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/drinks",
-							"protocol": "http",
+							"raw": "{{host}}/drinks",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks"
 							]
@@ -127,12 +121,10 @@
 						"method": "PATCH",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/drinks/1",
-							"protocol": "http",
+							"raw": "{{host}}/drinks/1",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks",
 								"1"
@@ -160,12 +152,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/drinks/1",
-							"protocol": "http",
+							"raw": "{{host}}/drinks/1",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks",
 								"1"
@@ -225,12 +215,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/drinks",
-							"protocol": "http",
+							"raw": "{{host}}/drinks",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks"
 							]
@@ -261,12 +249,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/drinks-detail",
-							"protocol": "http",
+							"raw": "{{host}}/drinks-detail",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks-detail"
 							]
@@ -293,12 +279,10 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/drinks",
-							"protocol": "http",
+							"raw": "{{host}}/drinks",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks"
 							]
@@ -325,12 +309,10 @@
 						"method": "PATCH",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/drinks/1",
-							"protocol": "http",
+							"raw": "{{host}}/drinks/1",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks",
 								"1"
@@ -358,12 +340,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/drinks/1",
-							"protocol": "http",
+							"raw": "{{host}}/drinks/1",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks",
 								"1"
@@ -410,12 +390,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/drinks",
-							"protocol": "http",
+							"raw": "{{host}}/drinks",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks"
 							]
@@ -446,12 +424,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/drinks-detail",
-							"protocol": "http",
+							"raw": "{{host}}/drinks-detail",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks-detail"
 							]
@@ -486,7 +462,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"mocha latte\",\r\n    \"recipe\": [{\r\n        \"name\": \"latte\",\r\n        \"color\": \"brown\",\r\n        \"parts\": 1\r\n    }]\r\n}",
+							"raw": "{\r\n    \"title\": \"mocha latte1\",\r\n    \"recipe\": [{\r\n        \"name\": \"latte\",\r\n        \"color\": \"brown\",\r\n        \"parts\": 1\r\n    }]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -494,12 +470,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/drinks",
-							"protocol": "http",
+							"raw": "{{host}}/drinks",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks"
 							]
@@ -542,12 +516,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/drinks/1",
-							"protocol": "http",
+							"raw": "{{host}}/drinks/1",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks",
 								"1"
@@ -576,12 +548,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/drinks/1",
-							"protocol": "http",
+							"raw": "{{host}}/drinks/1",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "5000",
 							"path": [
 								"drinks",
 								"1"
@@ -601,6 +571,32 @@
 					}
 				]
 			}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "localhost:5000"
 		}
 	]
 }
