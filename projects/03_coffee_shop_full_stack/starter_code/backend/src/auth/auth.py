@@ -59,6 +59,11 @@ def get_token_auth_header():
 
 
 def check_permissions(permissions, payload):
+    '''
+    Helper method to checks if the decoded JWT has the required permission
+    Raises 400 if permissions is not included in payload
+    Raises 403 AuthError if permission is not present for the user
+    '''
     if 'permissions' not in payload:
         raise AuthError({
             'code': 'invalid_header',
@@ -73,6 +78,9 @@ def check_permissions(permissions, payload):
 
 
 def verify_decode_jwt(token):
+    '''
+    Receives the encoded token and validates it after decoding
+    '''
     jsonurl = urlopen(f'https://abirame.us.auth0.com/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
     unverified_header = jwt.get_unverified_header(token)
@@ -134,7 +142,8 @@ def requires_auth(permissions=''):
             token = get_token_auth_header()
             try:
                 payload = verify_decode_jwt(token)
-            except:
+            except Exception as e:
+                print(e)
                 abort(401)
             check_permissions(permissions, payload)
             return f(payload, *args, **kwargs)

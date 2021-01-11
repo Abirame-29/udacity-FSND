@@ -20,6 +20,7 @@ def after_request(response):
                          'GET,PUT,POST,DELETE,OPTIONS')
     return response
 
+
 '''
 @TODO uncomment the following line to initialize the datbase
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
@@ -32,37 +33,71 @@ def after_request(response):
 
 @app.route('/drinks', methods=['GET'])
 def get_drinks():
-    drinks = Drink.query.all()
-    if len(drinks) == 0:
-        abort(404)
-    return jsonify({
-        'success': True,
-        'drinks': [drink.short() for drink in drinks]
-    })
+    '''
+    This endpoint fetches all the drinks
+    Responses:
+        200:    An array of drinks in short form
+        422:    Unprocessable request
+    Permissions:
+        This endpoint is available to public
+    '''
+    try:
+        drinks = Drink.query.all()
+        return jsonify({
+            'success': True,
+            'drinks': [drink.short() for drink in drinks]
+        })
+    except Exception as e:
+        print(e)
+        abort(422)
 
 
 @app.route('/drinks-detail', methods=['GET'])
 @requires_auth('get:drinks-detail')
 def get_drinks_detail(jwt):
-    drinks = Drink.query.all()
-    if len(drinks) == 0:
-        abort(404)
-    return jsonify({
-        'success': True,
-        'drinks': [drink.long() for drink in drinks]
-    })
+    '''
+    This endpoint fetches all the drinks and its details
+    Responses:
+        200:    An array of drinks in long form
+        422:    Unprocessable request
+    Permissions:
+        This endpoint is accessable to Baristas and Managers
+    '''
+    try:
+        drinks = Drink.query.all()
+        if len(drinks) == 0:
+            abort(404)
+        return jsonify({
+            'success': True,
+            'drinks': [drink.long() for drink in drinks]
+        })
+    except Exception as e:
+        print(e)
+        abort(422)
 
 
 @app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
 def post_drinks(jwt):
+    '''
+    This endpoint is to post a new drink
+    Parameters:
+        jwt: Decoded jwt token which contains the title
+             and recipe of the new drink
+    Responses:
+        200:    New drink which is created in long form
+        422:    Unprocessable request or invalid data in token
+    Permissions:
+        This endpoint is accessable to only to Managers
+    '''
     try:
         data = request.get_json()
         if 'title' not in data or 'recipe' not in data:
             abort(422)
         new_title = data['title']
         new_recipe = data['recipe']
-        drink = Drink(title=new_title, recipe=json.dumps(new_recipe))
+        drink.recipe = recipe if type(recipe) == \
+            str else json.dumps(recipe)
         drink.insert()
         return jsonify({
             'success': True,
@@ -76,6 +111,18 @@ def post_drinks(jwt):
 @app.route('/drinks/<int:drink_id>', methods=['PATCH'])
 @requires_auth('patch:drinks')
 def edit_drinks(jwt, drink_id):
+    '''
+    This endpoint is to edit an existing drink
+    Parameters:
+        drink_id: ID of the drink to be updated
+        jwt: Decoded jwt token which may contain the title
+             or the recipe of the drink to be updated
+    Responses:
+        200:    Updated drink in long form
+        422:    Unprocessable request
+    Permissions:
+        This endpoint is accessable to only to Managers
+    '''
     try:
         drink = Drink.query.get(drink_id)
         if drink:
@@ -83,7 +130,8 @@ def edit_drinks(jwt, drink_id):
             if 'title' in data:
                 drink.title = data['title']
             if 'recipe' in data:
-                drink.recipe = json.dumps(data['recipe'])
+                drink.recipe = recipe if type(recipe) == \
+                               str else json.dumps(recipe)
             drink.update()
         else:
             abort(404)
@@ -91,13 +139,24 @@ def edit_drinks(jwt, drink_id):
             'success': True,
             'drink': [drink.long()]
         })
-    except:
+    except Exception as e:
+        print(e)
         abort(422)
 
 
 @app.route('/drinks/<int:drink_id>', methods=['DELETE'])
 @requires_auth('delete:drinks')
 def delete_drink(jwt, drink_id):
+    '''
+    This endpoint is to delete a drink
+    Parameters:
+        drink_id: ID of the drink to be deleted
+    Responses:
+        200:    ID of the deleted drink
+        422:    Unprocessable request
+    Permissions:
+        This endpoint is accessble to only to Managers
+    '''
     try:
         drink = Drink.query.filter(Drink.id == drink_id).one_or_none()
         if drink:
@@ -108,7 +167,8 @@ def delete_drink(jwt, drink_id):
             'success': True,
             'delete': drink_id
         })
-    except:
+    except Exception as e:
+        print(e)
         abort(404)
 
 # Error Handling
