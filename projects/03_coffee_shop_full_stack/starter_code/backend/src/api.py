@@ -123,6 +123,15 @@ def unprocessable(error):
                     }), 422
 
 
+@app.errorhandler(401)
+def unprocessable(error):
+    return jsonify({
+                    "success": False,
+                    "error": 401,
+                    "message": "unauthorized"
+                    }), 401
+
+
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({
