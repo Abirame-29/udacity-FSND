@@ -97,7 +97,7 @@ def post_drinks(jwt):
         new_title = data['title']
         new_recipe = data['recipe']
         drink.recipe = recipe if type(recipe) == \
-            str else json.dumps(recipe)
+            str else json.dumps(data['recipe'])
         drink.insert()
         return jsonify({
             'success': True,
@@ -131,7 +131,7 @@ def edit_drinks(jwt, drink_id):
                 drink.title = data['title']
             if 'recipe' in data:
                 drink.recipe = recipe if type(recipe) == \
-                               str else json.dumps(recipe)
+                               str else json.dumps(data['recipe'])
             drink.update()
         else:
             abort(404)
