@@ -38,6 +38,8 @@ def create_app(test_config=None):
 		try:
 			actors = Actor.query.all()
 			current_actors = paginate_result(request, actors)
+			if len(actors)>0 and len(current_actors) == 0:
+				abort(404)
 			return jsonify({
 				'success': True,
 				'actors': current_actors,
@@ -53,6 +55,8 @@ def create_app(test_config=None):
 		try:
 			movies = Movie.query.all()
 			current_movies = paginate_result(request, movies)
+			if len(movies)>0 and len(current_movies) == 0:
+				abort(404)
 			return jsonify({
 				'success': True,
 				'movies': current_movies,
@@ -73,6 +77,8 @@ def create_app(test_config=None):
 			actor.insert()
 			actors = Actor.query.all()
 			current_actors = paginate_result(request, actors)
+			if len(actors)>0 and len(current_actors) == 0:
+				abort(404)
 			return jsonify({
 				'success': True,
 				'created_actor_id': actor.id,
@@ -97,6 +103,8 @@ def create_app(test_config=None):
 			movie.insert()
 			movies = Movie.query.all()
 			current_movies = paginate_result(request, movies)
+			if len(movies)>0 and len(current_movies) == 0:
+				abort(404)
 			return jsonify({
 				'success': True,
 				'created_movie_id': movie.id,
@@ -123,6 +131,8 @@ def create_app(test_config=None):
 				actor.update()
 				actors = Actor.query.all()
 				current_actors = paginate_result(request, actors)
+				if len(actors)>0 and len(current_actors) == 0:
+					abort(404)
 				return jsonify({
 					'success': True,
 					'edited_actor_id': actor.id,
@@ -149,6 +159,8 @@ def create_app(test_config=None):
 				movie.update()
 				movies = Movie.query.all()
 				current_movies = paginate_result(request, movies)
+				if len(movies)>0 and len(current_movies) == 0:
+					abort(404)
 				return jsonify({
 					'success': True,
 					'edited_movie_id': movie.id,
@@ -170,6 +182,8 @@ def create_app(test_config=None):
 				actor.delete()
 				actors = Actor.query.all()
 				current_actors = paginate_result(request, actors)
+				if len(actors)>0 and len(current_actors) == 0:
+					abort(404)
 				return jsonify({
 					'success': True,
 					'deleted_actor_id': actor.id,
@@ -191,6 +205,8 @@ def create_app(test_config=None):
 				movie.delete()
 				movies = Movie.query.all()
 				current_movies = paginate_result(request, movies)
+				if len(movies)>0 and len(current_movies) == 0:
+					abort(404)
 				return jsonify({
 					'success': True,
 					'deleted_movie_id': movie.id,
@@ -203,7 +219,54 @@ def create_app(test_config=None):
 			print(e)
 			abort(422)
 
+	@app.errorhandler(400)
+	def bad_request(error):
+		return jsonify({
+			'success': False,
+			'error': 400,
+			'message': "Bad request"
+			}), 400
 
+	@app.errorhandler(404)
+	def not_found(error):
+		return jsonify({
+			'success': False,
+			'error': 404,
+			'message': "Not found"
+			}), 404
+
+	@app.errorhandler(405)
+	def not_allowed(error):
+		return jsonify({
+			'success': False,
+			'error': 405,
+			'message': "Method not allowed"
+			}), 405
+
+	@app.errorhandler(422)
+	def unprocessable(error):
+		return jsonify({
+			'success': False,
+			'error': 422,
+			'message': "Unprocessable"
+			}), 422
+
+	@app.errorhandler(500)
+	def internal(error):
+		return jsonify({
+			'success': False,
+			'error': 500,
+			'message': "Internal server error"
+			}), 500
+
+	@app.errorhandler(AuthError)
+	def unauthorized(error):
+		return jsonify({
+			'success': False,
+			'error': 401,
+			'message': 'Unauthorized'
+			}), 401
+			
 	return app
 
 APP = create_app()
