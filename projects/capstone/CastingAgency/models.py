@@ -24,7 +24,22 @@ class Movie(db.Model):
 
     id = Column(db.Integer, primary_key=True)
     title = Column(db.String, unique=True, nullable=False)
-    release_date = Column(db.String)
+    release_date = Column(db.Date)
+
+    def __init__(self, title, release_date):
+        self.title = title
+        self.release_date = release_date
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
     def format(self):
         return {
@@ -39,6 +54,22 @@ class Actor(db.Model):
     name = Column(db.String, nullable=False)
     age = Column(db.Integer)
     gender = Column(db.String)
+
+    def __init__(self, name, age, gender):
+        self.name = name
+        self.age = age
+        self.gender = gender
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
     def format(self):
         return {

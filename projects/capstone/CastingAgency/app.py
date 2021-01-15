@@ -26,6 +26,12 @@ def create_app(test_config=None):
 	setup_db(app)
 	CORS(app)
 
+	@app.after_request
+	def after_request(response):
+		response.headers.add('Acess-Control-Allow-Headers', 'Content-Type, Authorization, true')
+		response.headers.add('Acess-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
+		return response
+
 	@app.route('/actors',methods=['GET'])
 	@requires_auth('get:actors')
 	def get_actors(jwt):
@@ -65,9 +71,138 @@ def create_app(test_config=None):
 				abort(422)
 			actor = Actor(name=data['name'],age=data['age'],gender=data['gender'])
 			actor.insert()
+			actors = Actor.query.all()
+			current_actors = paginate_result(request, actors)
+			return jsonify({
+				'success': True,
+				'created_actor_id': actor.id,
+				'actors': current_actors,
+				'total_actors': len(actors)
+			})
 		except Exception as e:
 			print(e)
 			abort(422)
+	
+	@app.route('/movies', methods=['POST'])
+	@requires_auth('post:movies')
+	def post_movies(jwt):
+		try:
+			data = request.get_json()
+			if 'title' not in data or 'release_date' not in data:
+				abort(422)
+			new_title = data['title']
+			new_release_date = data['release_date']
+			print(new_release_date, new_title)
+			movie = Movie(title=new_title,release_date=new_release_date)
+			movie.insert()
+			movies = Movie.query.all()
+			current_movies = paginate_result(request, movies)
+			return jsonify({
+				'success': True,
+				'created_movie_id': movie.id,
+				'movies': current_movies,
+				'total_movies': len(movies)
+			})
+		except Exception as e:
+			print(e)
+			abort(422)
+
+	@app.route('/actors/<int:actor_id>', methods=['PATCH'])
+	@requires_auth('patch:actors')
+	def edit_actors(jwt, actor_id):
+		try:
+			actor = Actor.query.get(actor_id)
+			if actor:
+				data = request.get_json()
+				if 'name' in data:
+					actor.name = data['name']
+				if 'age' in data:
+					actor.age = data['age']
+				if 'gender' in data:
+					actor.gender = data['gender']
+				actor.update()
+				actors = Actor.query.all()
+				current_actors = paginate_result(request, actors)
+				return jsonify({
+					'success': True,
+					'edited_actor_id': actor.id,
+					'actors': current_actors,
+					'total_actors': len(actors)
+				})
+			else:
+				abort(404)
+		except Exception as e:
+			print(e)
+			abort(422)
+		
+	@app.route('/movies/<int:movie_id>', methods=['PATCH'])
+	@requires_auth('patch:movies')
+	def edit_movies(jwt, movie_id):
+		try:
+			movie = Movie.query.get(movie_id)
+			if movie:
+				data = request.get_json()
+				if 'title' in data:
+					movie.title = data['title']
+				if 'release_date' in data:
+					movie.release_date = data['release_date']
+				movie.update()
+				movies = Movie.query.all()
+				current_movies = paginate_result(request, movies)
+				return jsonify({
+					'success': True,
+					'edited_movie_id': movie.id,
+					'movies': current_movies,
+					'total_movies': len(movies)
+				})
+			else:
+				abort(404)
+		except Exception as e:
+			print(e)
+			abort(422)
+
+	@app.route('/actors/<int:actor_id>', methods=['DELETE'])
+	@requires_auth('delete:actors')
+	def delete_actors(jwt, actor_id):
+		try:
+			actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
+			if actor:
+				actor.delete()
+				actors = Actor.query.all()
+				current_actors = paginate_result(request, actors)
+				return jsonify({
+					'success': True,
+					'deleted_actor_id': actor.id,
+					'actors': current_actors,
+					'total_actors': len(actors)
+				})
+			else:
+				abort(404)
+		except Exception as e:
+			print(e)
+			abort(422)
+
+	@app.route('/movies/<int:movie_id>', methods=['DELETE'])
+	@requires_auth('delete:movies')
+	def delete_movies(jwt, movie_id):
+		try:
+			movie = Movie.query.filter(Movie.id == movie_id).one_or_none()
+			if movie:
+				movie.delete()
+				movies = Movie.query.all()
+				current_movies = paginate_result(request, movies)
+				return jsonify({
+					'success': True,
+					'deleted_movie_id': movie.id,
+					'movies': current_movies,
+					'total_movies': len(movies)
+				})
+			else:
+				abort(404)
+		except Exception as e:
+			print(e)
+			abort(422)
+
 
 	return app
 
