@@ -37,6 +37,14 @@ class CastingAgencyTestCase(unittest.TestCase):
         # Executed after reach test
         pass
 
+    def test_get_actor_without_header(self):
+        res = self.client().get('/actors')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Unauthorized')
+
     def test_get_paginated_actors_casting_assistant(self):
         res = self.client().get('/actors',
                                 headers=get_headers(CASTING_ASSISTANT))

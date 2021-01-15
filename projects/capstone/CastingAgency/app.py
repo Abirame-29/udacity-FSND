@@ -34,6 +34,10 @@ def create_app(test_config=None):
                              'GET, POST, PATCH, DELETE, OPTIONS')
         return response
 
+    @app.route('/')
+    def welcome_message():
+        return 'Welcome to Casting Agency!'
+
     @app.route('/actors', methods=['GET'])
     @requires_auth('get:actors')
     def get_actors(jwt):
