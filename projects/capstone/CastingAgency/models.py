@@ -20,29 +20,29 @@ def setup_db(app, database_path=database_path):
 
 
 class Movie(db.Model):  
-  __tablename__ = 'movie'
+    __tablename__ = 'movie'
 
-  id = Column(db.Integer, primary_key=True)
-  title = Column(db.String, unique=True, nullable=False)
-  release_date = Column(db.String)
+    id = Column(db.Integer, primary_key=True)
+    title = Column(db.String, unique=True, nullable=False)
+    release_date = Column(db.String)
 
-  def format(self):
-    return {
-      'id': self.id,
-      'title': self.title,
-      'release_date': self.release_date}
+    def format(self):
+        return {
+        'id': self.id,
+        'title': self.title,
+        'release_date': self.release_date}
 
 class Actor(db.Model):
     __tablename__ = 'actor'
 
-  id = Column(db.Integer, primary_key=True)
-  name = Column(db.String, nullable=False)
-  age = Column(db.Integer)
-  gender = Column(db.String)
+    id = Column(db.Integer, primary_key=True)
+    name = Column(db.String, nullable=False)
+    age = Column(db.Integer)
+    gender = Column(db.String)
 
-  def format(self):
-    return {
-      'id': self.id,
-      'name': self.name,
-      'age': self.age,
-      'gender': self.gender}
+    def format(self):
+        return {
+        'id': self.id,
+        'name': self.name,
+        'age': self.age,
+        'gender': self.gender}
