@@ -5,8 +5,8 @@ The Casting Agency models a company that is responsible for creating movies and 
 
 ### URLs
 
-Casting Agency URL: https://casting-agency-heroku-app.herokuapp.com/ 
-Heroku GitHub repository: https://git.heroku.com/casting-agency-heroku-app.git 
+Casting Agency URL: https://my-casting-agency-app.herokuapp.com/ 
+Heroku GitHub repository: https://git.heroku.com/my-casting-agency-app.git 
 
 ## Getting Started
 
