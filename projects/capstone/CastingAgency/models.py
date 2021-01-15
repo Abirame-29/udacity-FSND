@@ -11,6 +11,8 @@ db = SQLAlchemy()
 setup_db(app)
     binds a flask application and a SQLAlchemy service
 '''
+
+
 def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -19,7 +21,7 @@ def setup_db(app, database_path=database_path):
     db.create_all()
 
 
-class Movie(db.Model):  
+class Movie(db.Model):
     __tablename__ = 'movie'
 
     id = Column(db.Integer, primary_key=True)
@@ -43,9 +45,11 @@ class Movie(db.Model):
 
     def format(self):
         return {
-        'id': self.id,
-        'title': self.title,
-        'release_date': self.release_date}
+            'id': self.id,
+            'title': self.title,
+            'release_date': self.release_date
+            }
+
 
 class Actor(db.Model):
     __tablename__ = 'actor'
@@ -73,7 +77,8 @@ class Actor(db.Model):
 
     def format(self):
         return {
-        'id': self.id,
-        'name': self.name,
-        'age': self.age,
-        'gender': self.gender}
+            'id': self.id,
+            'name': self.name,
+            'age': self.age,
+            'gender': self.gender
+            }

@@ -16,6 +16,7 @@ EXECUTIVE_PRODUCER = os.environ['EXECUTIVE_PRODUCER_JWT']
 def get_headers(token):
     return {'Authorization': f'Bearer {token}'}
 
+
 class CastingAgencyTestCase(unittest.TestCase):
     def setUp(self):
         # Define test variables and initialize app.
@@ -37,7 +38,8 @@ class CastingAgencyTestCase(unittest.TestCase):
         pass
 
     def test_get_paginated_actors_casting_assistant(self):
-        res = self.client().get('/actors', headers=get_headers(CASTING_ASSISTANT))
+        res = self.client().get('/actors',
+                                headers=get_headers(CASTING_ASSISTANT))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -46,33 +48,37 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assertTrue(data['actors'])
 
     def test_get_paginated_actors_casting_director(self):
-        res = self.client().get('/actors', headers=get_headers(CASTING_DIRECTOR))
+        res = self.client().get('/actors',
+                                headers=get_headers(CASTING_DIRECTOR))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['total_actors'])
         self.assertTrue(data['actors'])
-    
+
     def test_get_paginated_actors_executive_producer(self):
-        res = self.client().get('/actors', headers=get_headers(EXECUTIVE_PRODUCER))
+        res = self.client().get('/actors',
+                                headers=get_headers(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['total_actors'])
         self.assertTrue(data['actors'])
-    
+
     def test_get_paginated_actors_invalid_page(self):
-        res = self.client().get('/actors?page=500', headers=get_headers(CASTING_ASSISTANT))
+        res = self.client().get('/actors?page=500',
+                                headers=get_headers(CASTING_ASSISTANT))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unprocessable')
+        self.assertEqual(data['message'], 'Unprocessable')
 
     def test_get_paginated_movies_casting_assistant(self):
-        res = self.client().get('/movies', headers=get_headers(CASTING_ASSISTANT))
+        res = self.client().get('/movies',
+                                headers=get_headers(CASTING_ASSISTANT))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -81,30 +87,33 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assertTrue(data['movies'])
 
     def test_get_paginated_movies_casting_director(self):
-        res = self.client().get('/movies', headers=get_headers(CASTING_DIRECTOR))
+        res = self.client().get('/movies',
+                                headers=get_headers(CASTING_DIRECTOR))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['total_movies'])
         self.assertTrue(data['movies'])
-    
+
     def test_get_paginated_movies_executive_producer(self):
-        res = self.client().get('/movies', headers=get_headers(EXECUTIVE_PRODUCER))
+        res = self.client().get('/movies',
+                                headers=get_headers(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['total_movies'])
         self.assertTrue(data['movies'])
-    
+
     def test_get_paginated_movies_invalid_page(self):
-        res = self.client().get('/movies?page=500', headers=get_headers(CASTING_ASSISTANT))
+        res = self.client().get('/movies?page=500',
+                                headers=get_headers(CASTING_ASSISTANT))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unprocessable')
+        self.assertEqual(data['message'], 'Unprocessable')
 
     def test_post_actor_casting_assistant(self):
         res = self.client().post(
@@ -118,15 +127,16 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unauthorized')
+        self.assertEqual(data['message'], 'Unauthorized')
 
     def test_post_actor_without_data(self):
-        res = self.client().post('/actors', headers=get_headers(CASTING_DIRECTOR))
+        res = self.client().post('/actors',
+                                 headers=get_headers(CASTING_DIRECTOR))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unprocessable')
+        self.assertEqual(data['message'], 'Unprocessable')
 
     def test_post_actor_invalid_method(self):
         res = self.client().post(
@@ -140,7 +150,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 405)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Method not allowed')
+        self.assertEqual(data['message'], 'Method not allowed')
 
     def test_post_actor_casting_director(self):
         res = self.client().post(
@@ -185,15 +195,16 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unauthorized')
+        self.assertEqual(data['message'], 'Unauthorized')
 
     def test_post_movie_without_data(self):
-        res = self.client().post('/movies', headers=get_headers(EXECUTIVE_PRODUCER))
+        res = self.client().post('/movies',
+                                 headers=get_headers(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unprocessable')
+        self.assertEqual(data['message'], 'Unprocessable')
 
     def test_post_movie_invalid_method(self):
         res = self.client().post(
@@ -206,7 +217,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 405)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Method not allowed')
+        self.assertEqual(data['message'], 'Method not allowed')
 
     def test_post_movie_casting_director(self):
         res = self.client().post(
@@ -219,13 +230,13 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unauthorized')
+        self.assertEqual(data['message'], 'Unauthorized')
 
     def test_post_movie_executive_producer(self):
         res = self.client().post(
             '/movies',
             json={
-                'title': 'Despicable me3',
+                'title': 'Despicable me4',
                 'release_date': '2021-02-05'},
             headers=get_headers(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
@@ -246,7 +257,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unprocessable')
+        self.assertEqual(data['message'], 'Unprocessable')
 
     def test_edit_actor_casting_assistant(self):
         res = self.client().patch(
@@ -258,7 +269,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unauthorized')
+        self.assertEqual(data['message'], 'Unauthorized')
 
     def test_edit_actor_casting_director(self):
         res = self.client().patch(
@@ -298,7 +309,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unprocessable')
+        self.assertEqual(data['message'], 'Unprocessable')
 
     def test_edit_movie_casting_assistant(self):
         res = self.client().patch(
@@ -310,7 +321,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unauthorized')
+        self.assertEqual(data['message'], 'Unauthorized')
 
     def test_edit_movie_casting_director(self):
         res = self.client().patch(
@@ -341,23 +352,26 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assertTrue(data['edited_movie_id'])
 
     def delete_actor_invalid_actor(self):
-        res = self.client().delete('/actors/342', headers=get_headers(CASTING_DIRECTOR))
+        res = self.client().delete('/actors/342',
+                                   headers=get_headers(CASTING_DIRECTOR))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unprocessable')
+        self.assertEqual(data['message'], 'Unprocessable')
 
     def delete_actor_casting_assistant(self):
-        res = self.client().delete('/actors/1', headers=get_headers(CASTING_ASSISTANT))
+        res = self.client().delete('/actors/1',
+                                   headers=get_headers(CASTING_ASSISTANT))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unauthorized')
+        self.assertEqual(data['message'], 'Unauthorized')
 
     def delete_actor_casting_director(self):
-        res = self.client().delete('/actors/1', headers=get_headers(CASTING_DIRECTOR))
+        res = self.client().delete('/actors/1',
+                                   headers=get_headers(CASTING_DIRECTOR))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -367,7 +381,8 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assertTrue(data['deleted_actor_id'])
 
     def delete_actor_executive_producer(self):
-        res = self.client().delete('/actors/2', headers=get_headers(EXECUTIVE_PRODUCER))
+        res = self.client().delete('/actors/2',
+                                   headers=get_headers(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -377,31 +392,35 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assertTrue(data['deleted_actor_id'])
 
     def delete_movie_invalid_movie(self):
-        res = self.client().delete('/movies/342', headers=get_headers(CASTING_DIRECTOR))
+        res = self.client().delete('/movies/342',
+                                   headers=get_headers(CASTING_DIRECTOR))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unprocessable')
+        self.assertEqual(data['message'], 'Unprocessable')
 
     def delete_movie_casting_assistant(self):
-        res = self.client().delete('/movies/1', headers=get_headers(CASTING_ASSISTANT))
+        res = self.client().delete('/movies/1',
+                                   headers=get_headers(CASTING_ASSISTANT))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unauthorized')
+        self.assertEqual(data['message'], 'Unauthorized')
 
     def delete_movie_casting_director(self):
-        res = self.client().delete('/movies/1', headers=get_headers(CASTING_DIRECTOR))
+        res = self.client().delete('/movies/1',
+                                   headers=get_headers(CASTING_DIRECTOR))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'Unauthorized')
+        self.assertEqual(data['message'], 'Unauthorized')
 
     def delete_movie_executive_producer(self):
-        res = self.client().delete('/movies/1', headers=get_headers(EXECUTIVE_PRODUCER))
+        res = self.client().delete('/movies/1',
+                                   headers=get_headers(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -411,6 +430,6 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assertTrue(data['deleted_movie_id'])
 
 
+# Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
-
